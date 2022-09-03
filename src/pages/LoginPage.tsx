@@ -8,6 +8,8 @@ import {
 } from "@chakra-ui/react"
 import React from "react"
 import MainService from "../services/MainService"
+import { useNavigate } from "react-router-dom"
+import { useContext } from "../Contexts/GlobalContext"
 
 const LoginPage = () => {
 	return (
@@ -27,16 +29,28 @@ const LoginPage = () => {
 export default LoginPage
 
 const FormContainer = () => {
+	const { commands, state } = useContext()
+	const { setToken, getUser } = commands
 	const [email, setEmail] = React.useState("")
 	const [password, setPassword] = React.useState("")
 	const [isLoading, setIsLoading] = React.useState(false)
+
+	const navigate = useNavigate()
 
 	const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault()
 		setIsLoading(true)
 		const response = await MainService.authenticate(email, password)
+
 		setIsLoading(false)
-		console.log(response)
+
+		if (!response.status) {
+			return console.log("login failed")
+		}
+
+		setToken(response.data)
+		getUser(response.data)
+		navigate("/")
 	}
 
 	return (
@@ -62,16 +76,18 @@ const FormContainer = () => {
 						gap={6}
 					>
 						<Flex direction="column">
-							<FormLabel>Email</FormLabel>
+							<FormLabel htmlFor="email">Email</FormLabel>
 							<Input
+								id="email"
 								type="email"
 								placeholder="example@provider.com"
 								onChange={(e) => setEmail(e.target.value)}
 							/>
 						</Flex>
 						<Flex direction="column">
-							<FormLabel>Password</FormLabel>
+							<FormLabel htmlFor="password">Password</FormLabel>
 							<Input
+								id="password"
 								type="password"
 								placeholder="Password"
 								onChange={(e) => setPassword(e.target.value)}
@@ -82,7 +98,12 @@ const FormContainer = () => {
 							gap={4}
 							w="full"
 						>
-							<Button w="full">Register</Button>
+							<Button
+								w="full"
+								onClick={() => navigate("register")}
+							>
+								Register
+							</Button>
 							<Button
 								w="full"
 								colorScheme="purple"
@@ -90,6 +111,13 @@ const FormContainer = () => {
 								isLoading={isLoading}
 							>
 								Login
+							</Button>
+							<Button
+								w="full"
+								colorScheme="purple"
+								onClick={() => console.log(state)}
+							>
+								log
 							</Button>
 						</Flex>
 					</Flex>
