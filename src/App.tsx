@@ -1,3 +1,6 @@
+
+import React from "react";
+import MainRouter from "./routes/MainRouter";
 import { useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import { useContext } from "./Contexts/GlobalContext"
@@ -48,4 +51,4 @@ function App() {
 	return <MainRouter />
 }
 
-export default App
+export default App;
