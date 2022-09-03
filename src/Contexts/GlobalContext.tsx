@@ -2,6 +2,11 @@ import React from "react"
 import MainService from "../services/MainService"
 import { reducer, Action } from "./GlobalReducer"
 
+export interface GlobalState {
+	token: string
+	user: UserInterface
+}
+
 export interface UserInterface {
 	id: number
 	firstName: string
@@ -10,11 +15,6 @@ export interface UserInterface {
 	currentProjectId: number
 	team: string
 	role: string
-}
-
-export interface GlobalState {
-	token: string
-	user: UserInterface
 }
 
 export const initialUserState: UserInterface = {
