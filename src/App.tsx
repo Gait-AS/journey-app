@@ -1,4 +1,3 @@
-import React from "react"
 import { useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import { useContext } from "./Contexts/GlobalContext"
@@ -7,27 +6,16 @@ import MainRouter from "./routes/MainRouter"
 function App() {
 	const { state, commands } = useContext()
 	const { token, user } = state
-	const { setUser, setToken } = commands
+	const { setUser, setToken, getUser } = commands
 
 	useEffect(() => {
-		setToken("hei")
-		setUser({
-			id: 0,
-			firstName: "",
-			lastName: "",
-			email: "",
-			currentProjectId: 0,
-			team: "",
-			role: "",
-		})
-	}, [])
+		getUser()
+	}, [token])
 
 	const navigate = useNavigate()
 
 	useEffect(() => {
-		console.log(user)
-
-		if (!token || !user) {
+		if (user.id === 0) {
 			return navigate("/")
 		}
 
@@ -44,7 +32,7 @@ function App() {
 		}
 
 		navigate("/")
-	}, [user.role])
+	}, [user.id])
 
 	return <MainRouter />
 }

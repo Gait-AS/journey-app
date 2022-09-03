@@ -1,8 +1,15 @@
 import { Flex, Heading, Icon, Text, Image } from "@chakra-ui/react"
 import IconBriefcase from "../assets/IconBriefcase"
 import userImage from "../assets/userImage.png"
+import apiClient from "../services/api"
 
 const TopNavBar = () => {
+	const handleLogOut = () => {
+		console.log("log out")
+
+		apiClient.get("/api/logout")
+	}
+
 	return (
 		<Flex
 			w="full"
@@ -24,7 +31,10 @@ const TopNavBar = () => {
 					<IconBriefcase />
 				</Icon>
 			</Flex>
-			<Flex gap={2.5}>
+			<Flex
+				gap={2.5}
+				onClick={handleLogOut}
+			>
 				<Image
 					src={userImage}
 					boxSize="25px"

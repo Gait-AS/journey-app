@@ -1,5 +1,4 @@
 import apiClient from "../services/api"
-import axios from "axios"
 import { initialUserState, UserInterface } from "../Contexts/GlobalContext"
 
 const DEV_URL = "http://172.16.19.108:80/api"
@@ -33,13 +32,9 @@ class MainService {
 			})
 	}
 
-	getUser = async (token: string) => {
-		return axios
-			.get<Response<UserInterface>>(`${DEV_URL}/user`, {
-				headers: {
-					Authorization: `Bearer ${token}`,
-				},
-			})
+	getUser = async () => {
+		return await apiClient
+			.get<Response<UserInterface>>(`/api/user`)
 			.then((response) => {
 				return response.data
 			})
@@ -59,8 +54,8 @@ class MainService {
 		firstName: string,
 		lastName: string
 	) => {
-		return axios
-			.post<Response<string>>(`${DEV_URL}/auth/register`, {
+		return await apiClient
+			.post<Response<string>>(`/auth/register`, {
 				email: email,
 				password: password,
 				first_name: firstName,

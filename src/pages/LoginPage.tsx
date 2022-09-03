@@ -48,8 +48,10 @@ const FormContainer = () => {
 			return console.log("login failed")
 		}
 
+		console.log(response)
+
 		setToken(response.data)
-		getUser(response.data)
+		getUser()
 		navigate("/")
 	}
 

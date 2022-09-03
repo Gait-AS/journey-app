@@ -36,7 +36,7 @@ export interface Commands {
 	// getToken: () => Promise<string>
 	setToken: (token: string) => void
 	setUser: (user: UserInterface) => void
-	getUser: (token: string) => void
+	getUser: () => void
 }
 
 interface ContextInterface {
@@ -72,10 +72,12 @@ export const GlobalProvider = (props: { children: React.ReactNode }) => {
 		})
 	}
 
-	const getUser = async (token: string) => {
-		await MainService.getUser(token)
+	const getUser = async () => {
+		await MainService.getUser()
 			.then((response) => {
+				console.log(response)
 				setUser(response.data)
+				return response.data
 			})
 			.catch((error) => {
 				console.error("error in GlobalProvider.getUser()", error)
