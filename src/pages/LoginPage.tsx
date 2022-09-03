@@ -112,6 +112,13 @@ const FormContainer = () => {
 							>
 								Login
 							</Button>
+							<Button
+								w="full"
+								colorScheme="purple"
+								onClick={() => console.log(state)}
+							>
+								log
+							</Button>
 						</Flex>
 					</Flex>
 				</FormControl>

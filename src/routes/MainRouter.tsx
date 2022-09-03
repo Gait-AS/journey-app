@@ -1,8 +1,8 @@
 import { Routes, Route } from "react-router-dom"
-import LeaderPage from "../pages/LeaderPage"
+import LeaderPage from "../pages/LeaderPage/LeaderPage"
 import LoginPage from "../pages/LoginPage"
-import MasterPage from "../pages/MasterPage"
-import MemberPage from "../pages/MemberPage"
+import MasterPage from "../pages/MasterPage/MasterPage"
+import MemberPage from "../pages/MemberPage/MemberPage"
 import RegisterPage from "../pages/RegisterPage"
 
 const MainRouter = () => {

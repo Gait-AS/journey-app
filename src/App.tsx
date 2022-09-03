@@ -1,11 +1,25 @@
-import React, { useEffect } from "react"
+import { useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import { useContext } from "./Contexts/GlobalContext"
 import MainRouter from "./routes/MainRouter"
 
 function App() {
-	const { state } = useContext()
+	const { state, commands } = useContext()
 	const { token, user } = state
+	const { setUser, setToken } = commands
+
+	useEffect(() => {
+		setToken("hei")
+		setUser({
+			id: 0,
+			firstName: "",
+			lastName: "",
+			email: "",
+			currentProjectId: 0,
+			team: "",
+			role: "master",
+		})
+	}, [])
 
 	const navigate = useNavigate()
 
@@ -28,7 +42,6 @@ function App() {
 			return navigate("/member")
 		}
 
-		console.log("no role found")
 		navigate("/")
 	}, [user.role])
 
