@@ -1,4 +1,4 @@
-import apiClient from "../services/api";
+import apiClient from "../services/api"
 import axios from "axios"
 import { initialUserState, UserInterface } from "../Contexts/GlobalContext"
 
@@ -12,21 +12,15 @@ interface Response<T> {
 
 class MainService {
 	authenticate = async (email: string, password: string) => {
-		const csrf = () => apiClient.get("/sanctum/csrf-cookie");
+		await apiClient.get("/sanctum/csrf-cookie")
 
-		await apiClient
-			.post("/api/auth/authenticate", {
-		return axios
-			.post<Response<string>>(`${DEV_URL}/auth/authenticate`, {
+		return await apiClient
+			.post<Response<string>>("/api/auth/authenticate", {
 				email: email,
 				password: password,
 			})
 			.then((response) => {
-				localStorage.setItem("token", response.data.data);
-				console.log(response);
-			});
-	};
-				document.cookie = `token=${response.data}`
+				localStorage.setItem("token", response.data.data)
 				return response.data
 			})
 			.catch((error) => {
@@ -86,6 +80,6 @@ class MainService {
 	}
 }
 
-const MainServiceProvider = new MainService();
+const MainServiceProvider = new MainService()
 
-export default MainServiceProvider;
+export default MainServiceProvider
