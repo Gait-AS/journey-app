@@ -2,8 +2,25 @@ import { Button, Divider, Flex, Heading, Image, Text } from "@chakra-ui/react"
 import TopNavBar from "../../components/TopNavBar"
 import person1 from "../../assets/profile1.png"
 import { AddIcon, CheckIcon, CloseIcon, RepeatIcon } from "@chakra-ui/icons"
+import { useEffect } from "react"
+import { useNavigate } from "react-router-dom"
+import { useContext } from "../../Contexts/GlobalContext"
 
 const LeaderPage = () => {
+	const { state } = useContext()
+	const { user } = state
+	const { role } = user
+
+	const navigate = useNavigate()
+
+	// useEffect(() => {
+	// 	if (role === "master") {
+	// 		return
+	// 	}
+
+	// 	navigate("/")
+	// }, [])
+
 	return (
 		<>
 			<Flex
@@ -322,7 +339,7 @@ const TaskCard: React.FC<TaskCardProps> = ({
 				</Text>
 				<StatusCircle status={status} />
 			</Flex>
-			<Text fontSize="xl">{description}</Text>
+			<Text fontSize="md">{description}</Text>
 		</Flex>
 	)
 }

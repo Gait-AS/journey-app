@@ -392,7 +392,7 @@ const TaskCard: React.FC<TaskCardProps> = ({
 					{title}
 				</Text>
 			</Flex>
-			<Text fontSize="xl">{description}</Text>
+			<Text fontSize="md">{description}</Text>
 		</Flex>
 	)
 }

@@ -8,12 +8,12 @@ import { GlobalProvider } from "./Contexts/GlobalContext"
 const root = ReactDOM.createRoot(document.getElementById("root") as HTMLElement)
 root.render(
 	<React.StrictMode>
-		<BrowserRouter>
-			<ChakraProvider>
-				<GlobalProvider>
+		<GlobalProvider>
+			<BrowserRouter>
+				<ChakraProvider>
 					<App />
-				</GlobalProvider>
-			</ChakraProvider>
-		</BrowserRouter>
+				</ChakraProvider>
+			</BrowserRouter>
+		</GlobalProvider>
 	</React.StrictMode>
 )
