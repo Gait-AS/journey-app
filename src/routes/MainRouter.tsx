@@ -20,19 +20,18 @@ const MainRouter = () => {
 				path="register"
 				element={<RegisterPage />}
 			/>
-			{role === "master" && (
+			{accessLevel(role, ["leader"]) && (
 				<Route
 					path="master"
 					element={<MasterPage />}
 				/>
 			)}
-			{role === "master" ||
-				(role === "leader" && (
-					<Route
-						path="leader"
-						element={<LeaderPage />}
-					/>
-				))}
+			{accessLevel(role, ["master", "leader"]) && (
+				<Route
+					path="leader"
+					element={<LeaderPage />}
+				/>
+			)}
 			<Route
 				path="member"
 				element={<MemberPage />}
@@ -46,3 +45,7 @@ const MainRouter = () => {
 }
 
 export default MainRouter
+
+const accessLevel = (role: string, access: string[]): boolean => {
+	return access.includes(role) ? true : false
+}

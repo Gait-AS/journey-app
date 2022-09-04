@@ -18,14 +18,6 @@ const MasterPage = () => {
 
 	const navigate = useNavigate()
 
-	// useEffect(() => {
-	// 	if (role === "master" || role === "leader") {
-	// 		return
-	// 	}
-
-	// 	navigate("/")
-	// }, [])
-
 	return (
 		<Flex
 			direction="column"

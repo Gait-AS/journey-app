@@ -17,7 +17,7 @@ function App() {
 			email: "",
 			currentProjectId: 0,
 			team: "",
-			role: "master",
+			role: "leader",
 		})
 	}, [])
 
