@@ -235,6 +235,37 @@ const BillboardItem: React.FC<BillboardItemProps> = ({
 }
 
 const ProgressionBar = () => {
+	const { teams } = useContext().state.progress
+
+	let totalProgress = 0
+
+	teams.forEach((team) => {
+		totalProgress = totalProgress + team.percentageDone
+	})
+
+	let frontendPercent = 0
+
+	if (teams[0]) {
+		frontendPercent = teams[0].percentageDone
+	}
+
+	let backendPercent = 0
+
+	if (teams[1]) {
+		backendPercent = teams[1].percentageDone
+	}
+
+	let designPercent = 0
+
+	if (teams[2]) {
+		designPercent = teams[2].percentageDone
+	}
+
+	console.log(totalProgress)
+	console.log(frontendPercent)
+	console.log(backendPercent)
+	console.log(designPercent)
+
 	return (
 		<Flex
 			direction="column"
@@ -257,7 +288,7 @@ const ProgressionBar = () => {
 			>
 				<Flex
 					h="full"
-					w="10%"
+					w={`${frontendPercent}%`}
 					bgColor="blue.400"
 					alignItems="center"
 					justifyContent="end"
@@ -273,7 +304,7 @@ const ProgressionBar = () => {
 				</Flex>
 				<Flex
 					h="full"
-					w="20%"
+					w={`${backendPercent}%`}
 					bgColor="red.400"
 					alignItems="center"
 					justifyContent="end"
@@ -289,7 +320,7 @@ const ProgressionBar = () => {
 				</Flex>
 				<Flex
 					h="full"
-					w="15%"
+					w={`${designPercent}%`}
 					bgColor="orange.400"
 					alignItems="center"
 					justifyContent="end"
@@ -307,7 +338,7 @@ const ProgressionBar = () => {
 					ml={3}
 					fontWeight="medium"
 				>
-					43%
+					{Math.round(totalProgress)}%
 				</Text>
 			</Flex>
 		</Flex>
@@ -505,6 +536,7 @@ const TaskCard: React.FC<TaskCardProps> = ({
 			w="full"
 			direction="column"
 			maxW="285px"
+			minW="200px"
 			onClick={onOpen}
 			boxShadow={isHovering ? "outline" : "none"}
 			style={{ cursor: isHovering ? "pointer" : "default" }}

@@ -165,6 +165,8 @@ const MileStoneCard: React.FC<MileStoneCardProps> = ({
 const ProgressionBar = () => {
 	const team = useContext().state.progress.teams[1]
 
+	const teamProgress = (team.doneTasks / team.totalTasks) * 100
+
 	if (!team) {
 		throw new Error("team cant be undefined")
 	}
@@ -190,7 +192,7 @@ const ProgressionBar = () => {
 			>
 				<Flex
 					h="full"
-					w={`${Math.round(team.percentageDone)}%`}
+					w={`${Math.round(teamProgress)}%`}
 					bgColor="blue.400"
 					alignItems="center"
 					justifyContent="end"
@@ -201,7 +203,7 @@ const ProgressionBar = () => {
 						color="blue.50"
 						p={2.5}
 					>
-						{Math.round(team.percentageDone)}%
+						{Math.round(teamProgress)}%
 					</Text>
 				</Flex>
 			</Flex>

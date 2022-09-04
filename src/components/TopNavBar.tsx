@@ -61,13 +61,6 @@ const TopNavBar = () => {
 				gap={6}
 				onClick={handleLogOut}
 			>
-				<Button
-					size="sm"
-					colorScheme="purple"
-					onClick={() => console.log(state)}
-				>
-					log state
-				</Button>
 				<Flex gap={2.5}>
 					<Image
 						src={userImage}
