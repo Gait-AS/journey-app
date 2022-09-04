@@ -50,7 +50,7 @@ class MainService {
 
 	getUser = async () => {
 		return await apiClient
-			.get<Response<UserInterface>>(`api/user`)
+			.get<Response<UserResponse>>(`api/user`)
 			.then((response) => {
 				return response.data
 			})
@@ -59,8 +59,8 @@ class MainService {
 				return {
 					status: false,
 					message: error,
-					data: initialUserState,
-				} as Response<UserInterface>
+					data: {},
+				} as Response<UserResponse>
 			})
 	}
 
@@ -147,17 +147,24 @@ class MainService {
 			})
 	}
 
-	createTask = async (name: string, content: string) => {
+	createTask = async (name: string, content: string, teamId: number) => {
 		return await apiClient
 			.post<Response<Task>>("api/tasks/me/new", {
 				name: name,
 				content: content,
+				team_id: teamId,
 			})
 			.then((response) => {
 				return response.data
 			})
 			.catch((error) => {
-				console.error("error in mainService.createTask")
+				console.error("error in mainService.createTask", error)
+				return {
+					id: 0,
+					name: "",
+					content: "",
+					status: "todo",
+				}
 			})
 	}
 }

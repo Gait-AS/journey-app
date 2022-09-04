@@ -344,6 +344,7 @@ const Board = ({
 			direction="column"
 			gap={4}
 			flexGrow={1}
+			pb={40}
 		>
 			<Flex
 				alignItems="center"

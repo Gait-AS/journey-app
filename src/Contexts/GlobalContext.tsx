@@ -15,7 +15,6 @@ export interface UserInterface {
 	firstName: string
 	lastName: string
 	email: string
-	currentProjectId: number
 	teamId: number
 	role: string
 }
@@ -34,7 +33,6 @@ export const initialUserState: UserInterface = {
 	firstName: "",
 	lastName: "",
 	email: "",
-	currentProjectId: 0,
 	teamId: 0,
 	role: "",
 }
@@ -61,6 +59,7 @@ export interface Commands {
 		content: string
 	) => void
 	deleteTask: (id: number) => void
+	createTask: (name: string, content: string, id: number) => void
 }
 
 interface ContextInterface {
@@ -79,6 +78,7 @@ const Context = React.createContext<ContextInterface>({
 		getTasks: () => {},
 		updateTask: () => {},
 		deleteTask: () => {},
+		createTask: () => {},
 	},
 })
 
@@ -104,8 +104,18 @@ export const GlobalProvider = (props: { children: React.ReactNode }) => {
 	const getUser = async () => {
 		await MainService.getUser()
 			.then((response) => {
-				setUser(response.data)
-				return response.data
+				const data = response.data
+				const convert: UserInterface = {
+					id: data.id,
+					firstName: data.first_name,
+					lastName: data.last_name,
+					email: data.email,
+					teamId: data.team_id,
+					role: data.role,
+				}
+
+				setUser(convert)
+				return convert
 			})
 			.catch((error) => {
 				console.error("error in GlobalProvider.getUser()", error)
@@ -152,6 +162,11 @@ export const GlobalProvider = (props: { children: React.ReactNode }) => {
 		await getTasks()
 	}
 
+	const createTask = async (name: string, content: string, id: number) => {
+		await MainService.createTask(name, content, id)
+		await getTasks()
+	}
+
 	const commands: Commands = {
 		// getToken,
 		setToken,
@@ -162,6 +177,7 @@ export const GlobalProvider = (props: { children: React.ReactNode }) => {
 		getTasks,
 		updateTask,
 		deleteTask,
+		createTask,
 	}
 
 	return (
