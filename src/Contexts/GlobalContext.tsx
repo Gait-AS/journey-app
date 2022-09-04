@@ -184,6 +184,7 @@ export const GlobalProvider = (props: { children: React.ReactNode }) => {
 	) => {
 		await MainService.updateTask(id, name, status, content)
 		await getTasks()
+		await getProgress()
 	}
 
 	const deleteTask = async (id: number) => {
