@@ -7,6 +7,7 @@ import apiClient from "../services/api"
 
 const TopNavBar = () => {
 	const { state } = useContext()
+	const { user } = state
 
 	const navigate = useNavigate()
 
@@ -66,7 +67,9 @@ const TopNavBar = () => {
 						src={userImage}
 						boxSize="25px"
 					/>
-					<Text size="lg">Ole Walberg</Text>
+					<Text size="lg">
+						{user.firstName} {user.lastName}
+					</Text>
 				</Flex>
 			</Flex>
 		</Flex>
