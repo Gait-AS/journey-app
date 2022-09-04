@@ -6,7 +6,7 @@ import axios from "axios"
  * from base url, with default headers and credentials
  */
 const apiClient = axios.create({
-	baseURL: "http://172.16.19.108:8000/",
+	baseURL: "https://api.offlineit.no/",
 	withCredentials: true,
 	headers: {
 		"X-Requested-With": "XMLHttpRequest",
