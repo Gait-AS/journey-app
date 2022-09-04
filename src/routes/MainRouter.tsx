@@ -20,7 +20,7 @@ const MainRouter = () => {
 				path="register"
 				element={<RegisterPage />}
 			/>
-			{accessLevel(role, ["leader"]) && (
+			{accessLevel(role, ["master"]) && (
 				<Route
 					path="master"
 					element={<MasterPage />}
@@ -32,10 +32,12 @@ const MainRouter = () => {
 					element={<LeaderPage />}
 				/>
 			)}
-			<Route
-				path="member"
-				element={<MemberPage />}
-			/>
+			{accessLevel(role, ["master", "leader", "member"]) && (
+				<Route
+					path="member"
+					element={<MemberPage />}
+				/>
+			)}
 			<Route
 				path="*"
 				element={<LoginPage />}

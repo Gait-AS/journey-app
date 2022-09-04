@@ -1,8 +1,10 @@
+import { CheckIcon, DeleteIcon } from "@chakra-ui/icons"
 import {
 	Button,
 	Flex,
 	FormControl,
 	FormLabel,
+	Heading,
 	Input,
 	Modal,
 	ModalBody,
@@ -11,11 +13,10 @@ import {
 	ModalFooter,
 	ModalHeader,
 	ModalOverlay,
-	Select,
 	Textarea,
 } from "@chakra-ui/react"
 import { useEffect, useState } from "react"
-import { TaskState, useContext } from "../../Contexts/GlobalContext"
+import { useContext } from "../../Contexts/GlobalContext"
 
 interface TaskModalProps {
 	isOpen: boolean
@@ -23,29 +24,48 @@ interface TaskModalProps {
 	onClose: () => void
 }
 
-const TaskModal: React.FC<TaskModalProps> = ({ isOpen, onOpen, onClose }) => {
-	const { state } = useContext()
+const CreateTaskModal: React.FC<TaskModalProps> = ({
+	isOpen,
+	onOpen,
+	onClose,
+}) => {
+	const { state, commands } = useContext()
 	const { tasks, taskId } = state
+	const { updateTask, deleteTask } = commands
 
 	const selectedTask = tasks.find((task) => task.id === taskId)
 
 	const [name, setName] = useState(selectedTask?.name)
-	const [taskState, setTaskState] = useState(selectedTask?.state)
-	const [description, setDescription] = useState(selectedTask?.description)
+	const [taskStatus, setStatus] = useState(selectedTask?.status)
+	const [description, setContent] = useState(selectedTask?.content)
 
 	useEffect(() => {
 		const selectedTask = tasks.find((task) => task.id === taskId)
 
 		setName(selectedTask?.name)
-		setTaskState(selectedTask?.state)
-		setDescription(selectedTask?.description)
+		setStatus(selectedTask?.status)
+		setContent(selectedTask?.content)
 	}, [taskId])
 
 	const handleClose = () => {
-		setName("")
-		setTaskState("doing")
-		setDescription("")
 		onClose()
+	}
+
+	const handleConfirm = () => {
+		// if (!taskId) {
+		// 	throw new Error("taskId cannot be undefined")
+		// }
+		// if (!name) {
+		// 	throw new Error("name cannot be undefined")
+		// }
+		// if (!taskStatus) {
+		// 	throw new Error("status cannot be undefined")
+		// }
+		// if (!description) {
+		// 	throw new Error("description cannot be undefined")
+		// }
+		// updateTask(taskId, name, taskStatus, description)
+		// onClose()
 	}
 
 	return (
@@ -54,8 +74,10 @@ const TaskModal: React.FC<TaskModalProps> = ({ isOpen, onOpen, onClose }) => {
 			onClose={handleClose}
 		>
 			<ModalOverlay />
-			<ModalContent>
-				<ModalHeader>Manage task</ModalHeader>
+			<ModalContent p={5}>
+				<ModalHeader>
+					<Heading color="purple.900">Create task</Heading>
+				</ModalHeader>
 
 				<ModalCloseButton />
 
@@ -73,38 +95,29 @@ const TaskModal: React.FC<TaskModalProps> = ({ isOpen, onOpen, onClose }) => {
 							/>
 						</FormControl>
 						<FormControl>
-							<FormLabel>State</FormLabel>
-							<Select
-								placeholder="Select state"
-								value={taskState}
-								onChange={(e) =>
-									setTaskState(e.target.value as TaskState)
-								}
-							>
-								<option value="toDo">To do</option>
-								<option value="doing">Doing</option>
-								<option value="review">Review</option>
-								<option value="done">Done</option>
-							</Select>
-						</FormControl>
-						<FormControl>
 							<FormLabel>Description</FormLabel>
 							<Textarea
 								placeholder="Task description"
 								value={description}
-								onChange={(e) => setDescription(e.target.value)}
+								onChange={(e) => setContent(e.target.value)}
 							/>
 						</FormControl>
 					</Flex>
 				</ModalBody>
 
 				<ModalFooter gap={3}>
-					<Button onClick={handleClose}>Close</Button>
-					<Button colorScheme="purple">Confirm</Button>
+					<Button onClick={handleClose}>Cancel</Button>
+					<Button
+						colorScheme="purple"
+						leftIcon={<CheckIcon />}
+						onClick={handleConfirm}
+					>
+						Confirm
+					</Button>
 				</ModalFooter>
 			</ModalContent>
 		</Modal>
 	)
 }
 
-export default TaskModal
+export default CreateTaskModal

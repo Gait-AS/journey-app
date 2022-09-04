@@ -16,18 +16,18 @@ export interface UserInterface {
 	lastName: string
 	email: string
 	currentProjectId: number
-	team: string
+	teamId: number
 	role: string
 }
 
 export interface Task {
 	id: number
 	name: string
-	description: string
-	state: TaskState
+	content: string
+	status: TaskStatus
 }
 
-export type TaskState = "toDo" | "doing" | "review" | "done"
+export type TaskStatus = "todo" | "doing" | "review" | "done"
 
 export const initialUserState: UserInterface = {
 	id: 0,
@@ -35,7 +35,7 @@ export const initialUserState: UserInterface = {
 	lastName: "",
 	email: "",
 	currentProjectId: 0,
-	team: "",
+	teamId: 0,
 	role: "",
 }
 
@@ -43,7 +43,7 @@ const initialState: GlobalState = {
 	token: "",
 	user: initialUserState,
 	taskId: 0,
-	tasks: placeHolderTasks,
+	tasks: [],
 }
 
 export interface Commands {
@@ -52,6 +52,15 @@ export interface Commands {
 	setUser: (user: UserInterface) => void
 	getUser: () => void
 	setTaskId: (id: number) => void
+	setTasks: (tasks: Task[]) => void
+	getTasks: () => void
+	updateTask: (
+		id: number,
+		name: string,
+		status: TaskStatus,
+		content: string
+	) => void
+	deleteTask: (id: number) => void
 }
 
 interface ContextInterface {
@@ -66,6 +75,10 @@ const Context = React.createContext<ContextInterface>({
 		setUser: () => {},
 		getUser: () => {},
 		setTaskId: () => {},
+		setTasks: () => {},
+		getTasks: () => {},
+		updateTask: () => {},
+		deleteTask: () => {},
 	},
 })
 
@@ -91,7 +104,6 @@ export const GlobalProvider = (props: { children: React.ReactNode }) => {
 	const getUser = async () => {
 		await MainService.getUser()
 			.then((response) => {
-				console.log(response)
 				setUser(response.data)
 				return response.data
 			})
@@ -107,12 +119,49 @@ export const GlobalProvider = (props: { children: React.ReactNode }) => {
 		})
 	}
 
+	const setTasks = (tasks: Task[]) => {
+		dispatch({
+			type: Action.SET_TASKS,
+			tasks,
+		})
+	}
+
+	const getTasks = async () => {
+		await MainService.getTasks()
+			.then((response) => {
+				setTasks(response.data)
+				return response.data
+			})
+			.catch((error) => {
+				console.error("error in GlobalProvider.getTasks", error)
+			})
+	}
+
+	const updateTask = async (
+		id: number,
+		name: string,
+		status: TaskStatus,
+		content: string
+	) => {
+		await MainService.updateTask(id, name, status, content)
+		await getTasks()
+	}
+
+	const deleteTask = async (id: number) => {
+		await MainService.deleteTask(id)
+		await getTasks()
+	}
+
 	const commands: Commands = {
 		// getToken,
 		setToken,
 		setUser,
 		getUser,
 		setTaskId,
+		setTasks,
+		getTasks,
+		updateTask,
+		deleteTask,
 	}
 
 	return (

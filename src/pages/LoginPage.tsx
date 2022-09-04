@@ -48,11 +48,19 @@ const FormContainer = () => {
 			return console.log("login failed")
 		}
 
-		console.log(response)
+		await getUser()
 
-		setToken(response.data)
-		getUser()
-		navigate("/")
+		console.log(state.user.role)
+
+		if (state.user.role === "master") {
+			return navigate("master")
+		}
+
+		if (state.user.role === "leader") {
+			return navigate("leader")
+		}
+
+		navigate("member")
 	}
 
 	return (
@@ -113,13 +121,6 @@ const FormContainer = () => {
 								isLoading={isLoading}
 							>
 								Login
-							</Button>
-							<Button
-								w="full"
-								colorScheme="purple"
-								onClick={() => console.log(state)}
-							>
-								log
 							</Button>
 						</Flex>
 					</Flex>

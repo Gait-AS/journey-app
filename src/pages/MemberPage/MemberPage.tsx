@@ -1,18 +1,47 @@
-import { Divider, Flex, Heading, Text, useDisclosure } from "@chakra-ui/react"
+import { AddIcon } from "@chakra-ui/icons"
+import {
+	Button,
+	Divider,
+	Flex,
+	Heading,
+	Text,
+	useDisclosure,
+} from "@chakra-ui/react"
 import { useEffect, useState } from "react"
 import TopNavBar from "../../components/TopNavBar"
 import { Task, useContext } from "../../Contexts/GlobalContext"
-import TaskModal from "./TaskModal"
+import CreateTaskModal from "./CreateTaskModal"
+import TaskModal from "./ManageTaskModal"
 
 const LeaderPage = () => {
-	const { isOpen, onOpen, onClose } = useDisclosure()
+	const { state, commands } = useContext()
+	const { getTasks } = commands
+	const {
+		isOpen: isManageOpen,
+		onOpen: onManageOpen,
+		onClose: onManageClose,
+	} = useDisclosure()
+	const {
+		isOpen: isCreateOpen,
+		onOpen: onCreateOpen,
+		onClose: onCreateClose,
+	} = useDisclosure()
+
+	useEffect(() => {
+		getTasks()
+	}, [state.user.role])
 
 	return (
 		<>
 			<TaskModal
-				isOpen={isOpen}
-				onOpen={onOpen}
-				onClose={onClose}
+				isOpen={isManageOpen}
+				onOpen={onManageOpen}
+				onClose={onManageClose}
+			/>
+			<CreateTaskModal
+				isOpen={isCreateOpen}
+				onOpen={onCreateOpen}
+				onClose={onCreateClose}
 			/>
 			<Flex
 				direction="column"
@@ -36,7 +65,10 @@ const LeaderPage = () => {
 						flexGrow={1}
 					>
 						<ProgressionBar />
-						<Board onOpen={onOpen} />
+						<Board
+							onManageOpen={onManageOpen}
+							onCreateOpen={onCreateOpen}
+						/>
 					</Flex>
 					<Billboard />
 				</Flex>
@@ -176,7 +208,7 @@ const BillboardItem: React.FC<BillboardItemProps> = ({
 			>
 				<Text fontSize="lg">{description}</Text>
 				<Flex gap={2}>
-					{reactions.map((reaction) => {
+					{reactions.map((reaction, index) => {
 						return (
 							<Flex
 								gap={2}
@@ -185,6 +217,7 @@ const BillboardItem: React.FC<BillboardItemProps> = ({
 								px={3}
 								py={1}
 								w="fit-content"
+								key={index}
 							>
 								<Text>{reaction.emoji}</Text>
 								<Text>{reaction.count}</Text>
@@ -277,7 +310,13 @@ const ProgressionBar = () => {
 	)
 }
 
-const Board = ({ onOpen }: { onOpen: () => void }) => {
+const Board = ({
+	onManageOpen,
+	onCreateOpen,
+}: {
+	onManageOpen: () => void
+	onCreateOpen: () => void
+}) => {
 	const { state } = useContext()
 	const { tasks } = state
 
@@ -287,16 +326,16 @@ const Board = ({ onOpen }: { onOpen: () => void }) => {
 	const [doneTasks, setDoneTasks] = useState<Task[]>([])
 
 	useEffect(() => {
-		const toDo = tasks.filter((task) => task.state === "toDo")
+		const toDo = tasks.filter((task) => task.status === "todo")
 		setToDoTasks(toDo)
 
-		const doing = tasks.filter((task) => task.state === "doing")
+		const doing = tasks.filter((task) => task.status === "doing")
 		setDoingTasks(doing)
 
-		const review = tasks.filter((task) => task.state === "review")
+		const review = tasks.filter((task) => task.status === "review")
 		setReviewTasks(review)
 
-		const done = tasks.filter((task) => task.state === "done")
+		const done = tasks.filter((task) => task.status === "done")
 		setDoneTasks(done)
 	}, [tasks])
 
@@ -324,8 +363,17 @@ const Board = ({ onOpen }: { onOpen: () => void }) => {
 				<BoardColumn
 					name="To do"
 					emoji="🧐"
-					onOpen={onOpen}
+					onManageOpen={onManageOpen}
 					tasks={toDoTasks}
+					bottomButton={
+						<Button
+							colorScheme="purple"
+							leftIcon={<AddIcon />}
+							onClick={onCreateOpen}
+						>
+							Create task
+						</Button>
+					}
 				/>
 				<Divider
 					orientation="vertical"
@@ -334,7 +382,7 @@ const Board = ({ onOpen }: { onOpen: () => void }) => {
 				<BoardColumn
 					name="Doing"
 					emoji="😮‍💨"
-					onOpen={onOpen}
+					onManageOpen={onManageOpen}
 					tasks={doingTasks}
 				/>
 				<Divider
@@ -344,7 +392,7 @@ const Board = ({ onOpen }: { onOpen: () => void }) => {
 				<BoardColumn
 					name="Review"
 					emoji="🥶"
-					onOpen={onOpen}
+					onManageOpen={onManageOpen}
 					tasks={reviewTasks}
 				/>
 				<Divider
@@ -354,7 +402,7 @@ const Board = ({ onOpen }: { onOpen: () => void }) => {
 				<BoardColumn
 					name="Done"
 					emoji="🥳"
-					onOpen={onOpen}
+					onManageOpen={onManageOpen}
 					tasks={doneTasks}
 				/>
 			</Flex>
@@ -365,21 +413,25 @@ const Board = ({ onOpen }: { onOpen: () => void }) => {
 interface TeamMemberColumnProps {
 	name?: string
 	emoji?: string
-	onOpen: () => void
+	onManageOpen: () => void
+	onCreateOpen?: () => void
 	tasks: Task[]
+	bottomButton?: React.ReactNode
 }
 
 const BoardColumn: React.FC<TeamMemberColumnProps> = ({
 	name = "Placeholder",
 	emoji = "🫥",
-	onOpen,
+	onManageOpen,
+	onCreateOpen,
 	tasks,
+	bottomButton,
 }) => {
 	const { commands } = useContext()
 	const { setTaskId } = commands
 
 	const handleOpen = (id: number) => {
-		onOpen()
+		onManageOpen()
 		setTaskId(id)
 	}
 
@@ -409,30 +461,32 @@ const BoardColumn: React.FC<TeamMemberColumnProps> = ({
 					{emoji}
 				</Text>
 			</Flex>
-			{tasks.map((task) => {
+			{tasks.map((task, index) => {
 				return (
 					<TaskCard
+						key={index}
 						onOpen={() => {
 							handleOpen(task.id)
 						}}
-						title={task.name}
-						description={task.description}
+						name={task.name}
+						content={task.content}
 					/>
 				)
 			})}
+			{bottomButton && bottomButton}
 		</Flex>
 	)
 }
 
 interface TaskCardProps {
-	title?: string
-	description?: string
+	name?: string
+	content?: string
 	onOpen: () => void
 }
 
 const TaskCard: React.FC<TaskCardProps> = ({
-	title = "Title",
-	description = "Donec gravida suspendisse tellus fermentum id lacus dui sit.",
+	name = "Title",
+	content = "Donec gravida suspendisse tellus fermentum id lacus dui sit.",
 	onOpen,
 }) => {
 	const [isHovering, setIsHovering] = useState(false)
@@ -460,10 +514,10 @@ const TaskCard: React.FC<TaskCardProps> = ({
 					fontSize="lg"
 					fontWeight="semibold"
 				>
-					{title}
+					{name}
 				</Text>
 			</Flex>
-			<Text fontSize="md">{description}</Text>
+			<Text fontSize="md">{content}</Text>
 		</Flex>
 	)
 }
