@@ -1,13 +1,13 @@
 import React from "react"
 import MainService from "../services/MainService"
 import { reducer, Action } from "./GlobalReducer"
-import { placeHolderTasks } from "./placeholderData"
 
 export interface GlobalState {
 	token: string
 	user: UserInterface
 	taskId: number
 	tasks: Task[]
+	progress: Progress
 }
 
 export interface UserInterface {
@@ -28,6 +28,19 @@ export interface Task {
 
 export type TaskStatus = "todo" | "doing" | "review" | "done"
 
+interface Team {
+	name: string
+	totalTasks: number
+	doneTasks: number
+	notDoneTasks: number
+	percentageDone: number
+}
+
+export interface Progress {
+	total: number
+	teams: Team[]
+}
+
 export const initialUserState: UserInterface = {
 	id: 0,
 	firstName: "",
@@ -42,6 +55,18 @@ const initialState: GlobalState = {
 	user: initialUserState,
 	taskId: 0,
 	tasks: [],
+	progress: {
+		total: 0,
+		teams: [
+			{
+				name: "",
+				totalTasks: 0,
+				doneTasks: 0,
+				notDoneTasks: 0,
+				percentageDone: 0,
+			},
+		],
+	},
 }
 
 export interface Commands {
@@ -60,6 +85,8 @@ export interface Commands {
 	) => void
 	deleteTask: (id: number) => void
 	createTask: (name: string, content: string, id: number) => void
+	setProgress: (progress: Progress) => void
+	getProgress: () => void
 }
 
 interface ContextInterface {
@@ -79,6 +106,8 @@ const Context = React.createContext<ContextInterface>({
 		updateTask: () => {},
 		deleteTask: () => {},
 		createTask: () => {},
+		setProgress: () => {},
+		getProgress: () => {},
 	},
 })
 
@@ -167,6 +196,34 @@ export const GlobalProvider = (props: { children: React.ReactNode }) => {
 		await getTasks()
 	}
 
+	const setProgress = (progress: Progress) => {
+		dispatch({
+			type: Action.SET_PROGRESS,
+			progress,
+		})
+	}
+
+	const getProgress = async () => {
+		const result = await MainService.getProgress()
+		const data = result.data
+		const convert = {
+			total: data.total,
+			teams: [] as Team[],
+		}
+
+		data.teams.forEach((team) => {
+			convert.teams.push({
+				name: team.name,
+				totalTasks: team.total_tasks,
+				doneTasks: team.done_tasks,
+				notDoneTasks: team.not_done_tasks,
+				percentageDone: team.percentage_done,
+			})
+		})
+
+		setProgress(convert)
+	}
+
 	const commands: Commands = {
 		// getToken,
 		setToken,
@@ -178,6 +235,8 @@ export const GlobalProvider = (props: { children: React.ReactNode }) => {
 		updateTask,
 		deleteTask,
 		createTask,
+		setProgress,
+		getProgress,
 	}
 
 	return (

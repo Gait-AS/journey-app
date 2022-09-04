@@ -1,10 +1,11 @@
-import { GlobalState, Task, UserInterface } from "./GlobalContext"
+import { GlobalState, Progress, Task, UserInterface } from "./GlobalContext"
 
 export enum Action {
 	SET_TOKEN,
 	SET_USER,
 	SET_TASK_ID,
 	SET_TASKS,
+	SET_PROGRESS,
 }
 
 export type ActionType =
@@ -24,6 +25,10 @@ export type ActionType =
 			type: Action.SET_TASKS
 			tasks: Task[]
 	  }
+	| {
+			type: Action.SET_PROGRESS
+			progress: Progress
+	  }
 
 export const reducer = (state: GlobalState, action: ActionType) => {
 	switch (action.type) {
@@ -41,6 +46,10 @@ export const reducer = (state: GlobalState, action: ActionType) => {
 
 		case Action.SET_TASKS: {
 			return { ...state, tasks: action.tasks }
+		}
+
+		case Action.SET_PROGRESS: {
+			return { ...state, progress: action.progress }
 		}
 	}
 }
