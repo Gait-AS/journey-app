@@ -36,9 +36,13 @@ const CreateTaskModal: React.FC<TaskModalProps> = ({
 	const [name, setName] = useState("")
 	const [content, setContent] = useState("")
 
-	const handleClose = () => {
+	const resetState = () => {
 		setName("")
 		setContent("")
+	}
+
+	const handleClose = () => {
+		resetState()
 		onClose()
 	}
 
@@ -53,6 +57,7 @@ const CreateTaskModal: React.FC<TaskModalProps> = ({
 			throw new Error("description cannot be undefined")
 		}
 		createTask(name, content, teamId)
+		resetState()
 		onClose()
 	}
 
