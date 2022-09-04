@@ -1,4 +1,4 @@
-import axios from "axios"
+import axios from "axios";
 
 /**
  * @description
@@ -6,7 +6,7 @@ import axios from "axios"
  * from base url, with default headers and credentials
  */
 const apiClient = axios.create({
-	baseURL: "http://172.16.19.108:8000/",
+	baseURL: "http://api.offlineit.no/",
 	withCredentials: true,
 	headers: {
 		"X-Requested-With": "XMLHttpRequest",
@@ -14,6 +14,6 @@ const apiClient = axios.create({
 		Accept: "application/json",
 		Authorization: "Bearer " + localStorage.getItem("token"),
 	},
-})
+});
 
-export default apiClient
+export default apiClient;
