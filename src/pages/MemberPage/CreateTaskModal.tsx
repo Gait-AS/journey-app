@@ -1,4 +1,4 @@
-import { CheckIcon, DeleteIcon } from "@chakra-ui/icons"
+import { CheckIcon } from "@chakra-ui/icons"
 import {
 	Button,
 	Flex,
@@ -15,7 +15,7 @@ import {
 	ModalOverlay,
 	Textarea,
 } from "@chakra-ui/react"
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { useContext } from "../../Contexts/GlobalContext"
 
 interface TaskModalProps {
