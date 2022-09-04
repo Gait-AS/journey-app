@@ -1,11 +1,5 @@
 import apiClient from "../services/api"
-import {
-	initialUserState,
-	Task,
-	TaskStatus,
-	UserInterface,
-} from "../Contexts/GlobalContext"
-import { ThemeContext } from "@emotion/react"
+import { Task, TaskStatus } from "../Contexts/GlobalContext"
 
 interface Response<T> {
 	status: boolean
@@ -23,6 +17,17 @@ interface UserResponse {
 	last_name: string
 	role: string
 	updated_at: string
+}
+
+interface ProgressResponse {
+	total: number
+	teams: {
+		name: string
+		total_tasks: number
+		done_tasks: number
+		not_done_tasks: number
+		percentage_done: number
+	}[]
 }
 
 class MainService {
@@ -50,7 +55,7 @@ class MainService {
 
 	getUser = async () => {
 		return await apiClient
-			.get<Response<UserInterface>>(`api/user`)
+			.get<Response<UserResponse>>(`api/user`)
 			.then((response) => {
 				return response.data
 			})
@@ -59,8 +64,8 @@ class MainService {
 				return {
 					status: false,
 					message: error,
-					data: initialUserState,
-				} as Response<UserInterface>
+					data: {},
+				} as Response<UserResponse>
 			})
 	}
 
@@ -147,17 +152,55 @@ class MainService {
 			})
 	}
 
-	createTask = async (name: string, content: string) => {
+	createTask = async (name: string, content: string, teamId: number) => {
 		return await apiClient
 			.post<Response<Task>>("api/tasks/me/new", {
 				name: name,
 				content: content,
+				team_id: teamId,
 			})
 			.then((response) => {
 				return response.data
 			})
 			.catch((error) => {
-				console.error("error in mainService.createTask")
+				console.error("error in MainService.createTask", error)
+				return {
+					status: false,
+					message: error,
+					data: {
+						id: 0,
+						name: "",
+						content: "",
+						status: "todo",
+					},
+				}
+			})
+	}
+
+	getProgress = async () => {
+		return await apiClient
+			.get<Response<ProgressResponse>>("api/progress")
+			.then((response) => {
+				return response.data
+			})
+			.catch((error) => {
+				console.error("error in MainService.getProgress", error)
+				return {
+					status: false,
+					message: error,
+					data: {
+						total: 0,
+						teams: [
+							{
+								name: "noname",
+								total_tasks: 0,
+								done_tasks: 0,
+								not_done_tasks: 0,
+								percentage_done: 0,
+							},
+						],
+					},
+				}
 			})
 	}
 }

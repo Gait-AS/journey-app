@@ -15,7 +15,7 @@ import TaskModal from "./ManageTaskModal"
 
 const LeaderPage = () => {
 	const { state, commands } = useContext()
-	const { getTasks } = commands
+	const { getTasks, getProgress } = commands
 	const {
 		isOpen: isManageOpen,
 		onOpen: onManageOpen,
@@ -30,6 +30,10 @@ const LeaderPage = () => {
 	useEffect(() => {
 		getTasks()
 	}, [state.user.role])
+
+	useEffect(() => {
+		getProgress()
+	}, [state.user])
 
 	return (
 		<>
@@ -344,6 +348,7 @@ const Board = ({
 			direction="column"
 			gap={4}
 			flexGrow={1}
+			pb={40}
 		>
 			<Flex
 				alignItems="center"

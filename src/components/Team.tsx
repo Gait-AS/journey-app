@@ -9,7 +9,7 @@ import person5 from "../assets/profile5.png"
 interface TeamProps {
 	name: string
 	percentage: number
-	currentMilestone: string
+	currentMilestone?: string
 	color: string
 	numberOfMembers?: number
 }
@@ -40,17 +40,19 @@ const Team: React.FC<TeamProps> = ({
 
 			<ProgressBar
 				color={color}
-				percentage={percentage}
+				percentage={Math.round(percentage)}
 			/>
 
 			<Flex
 				w="full"
 				justifyContent="space-between"
 			>
-				<CurrentMilestone
-					color={color}
-					currentMilestone={currentMilestone}
-				/>
+				{currentMilestone && (
+					<CurrentMilestone
+						color={color}
+						currentMilestone={currentMilestone}
+					/>
+				)}
 				<Button
 					size="sm"
 					colorScheme={color}

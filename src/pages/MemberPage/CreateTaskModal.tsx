@@ -30,42 +30,30 @@ const CreateTaskModal: React.FC<TaskModalProps> = ({
 	onClose,
 }) => {
 	const { state, commands } = useContext()
-	const { tasks, taskId } = state
-	const { updateTask, deleteTask } = commands
+	const { teamId } = state.user
+	const { createTask } = commands
 
-	const selectedTask = tasks.find((task) => task.id === taskId)
-
-	const [name, setName] = useState(selectedTask?.name)
-	const [taskStatus, setStatus] = useState(selectedTask?.status)
-	const [description, setContent] = useState(selectedTask?.content)
-
-	useEffect(() => {
-		const selectedTask = tasks.find((task) => task.id === taskId)
-
-		setName(selectedTask?.name)
-		setStatus(selectedTask?.status)
-		setContent(selectedTask?.content)
-	}, [taskId])
+	const [name, setName] = useState("")
+	const [content, setContent] = useState("")
 
 	const handleClose = () => {
+		setName("")
+		setContent("")
 		onClose()
 	}
 
 	const handleConfirm = () => {
-		// if (!taskId) {
-		// 	throw new Error("taskId cannot be undefined")
-		// }
-		// if (!name) {
-		// 	throw new Error("name cannot be undefined")
-		// }
-		// if (!taskStatus) {
-		// 	throw new Error("status cannot be undefined")
-		// }
-		// if (!description) {
-		// 	throw new Error("description cannot be undefined")
-		// }
-		// updateTask(taskId, name, taskStatus, description)
-		// onClose()
+		if (!teamId) {
+			throw new Error("teamId cannot be undefined")
+		}
+		if (!name) {
+			throw new Error("name cannot be undefined")
+		}
+		if (!content) {
+			throw new Error("description cannot be undefined")
+		}
+		createTask(name, content, teamId)
+		onClose()
 	}
 
 	return (
@@ -98,7 +86,7 @@ const CreateTaskModal: React.FC<TaskModalProps> = ({
 							<FormLabel>Description</FormLabel>
 							<Textarea
 								placeholder="Task description"
-								value={description}
+								value={content}
 								onChange={(e) => setContent(e.target.value)}
 							/>
 						</FormControl>

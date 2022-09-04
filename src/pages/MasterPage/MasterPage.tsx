@@ -7,16 +7,16 @@ import person3 from "../../assets/profile3.png"
 import person4 from "../../assets/profile4.png"
 import person5 from "../../assets/profile5.png"
 import { AddIcon } from "@chakra-ui/icons"
-import { useNavigate } from "react-router-dom"
 import { useContext } from "../../Contexts/GlobalContext"
 import { useEffect } from "react"
 
 const MasterPage = () => {
-	const { state } = useContext()
-	const { user } = state
-	const { role } = user
+	const { state, commands } = useContext()
+	const { getProgress } = commands
 
-	const navigate = useNavigate()
+	useEffect(() => {
+		getProgress()
+	}, [state.user])
 
 	return (
 		<Flex
@@ -43,6 +43,28 @@ const MasterPage = () => {
 export default MasterPage
 
 const TeamsSection = () => {
+	const { progress } = useContext().state
+	const { teams } = progress
+
+	const getColor = (number: number) => {
+		if (number === 0) {
+			return "blue"
+		}
+		if (number === 1) {
+			return "red"
+		}
+		if (number === 2) {
+			return "orange"
+		}
+		if (number === 4) {
+			return "green"
+		}
+		if (number === 5) {
+			return "pink"
+		}
+		return "yellow"
+	}
+
 	return (
 		<Flex
 			direction="column"
@@ -56,24 +78,15 @@ const TeamsSection = () => {
 			>
 				Teams
 			</Heading>
-			<Team
-				name="Frontend"
-				percentage={35}
-				currentMilestone="Complete task page"
-				color="blue"
-			/>
-			<Team
-				name="Backend"
-				percentage={25}
-				currentMilestone="Create docker image"
-				color="red"
-			/>
-			<Team
-				name="Design"
-				percentage={30}
-				currentMilestone="Figure out what font to use"
-				color="orange"
-			/>
+			{teams.map((team, index) => {
+				return (
+					<Team
+						name={team.name}
+						percentage={team.percentageDone}
+						color={getColor(index)}
+					/>
+				)
+			})}
 			<Button
 				w="fit-content"
 				colorScheme="purple"

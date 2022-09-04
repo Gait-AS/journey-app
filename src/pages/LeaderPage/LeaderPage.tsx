@@ -2,24 +2,16 @@ import { Button, Divider, Flex, Heading, Image, Text } from "@chakra-ui/react"
 import TopNavBar from "../../components/TopNavBar"
 import person1 from "../../assets/profile1.png"
 import { AddIcon, CheckIcon, CloseIcon, RepeatIcon } from "@chakra-ui/icons"
-import { useEffect } from "react"
-import { useNavigate } from "react-router-dom"
 import { useContext } from "../../Contexts/GlobalContext"
+import { useEffect } from "react"
 
 const LeaderPage = () => {
-	const { state } = useContext()
-	const { user } = state
-	const { role } = user
+	const { state, commands } = useContext()
+	const { getProgress } = commands
 
-	const navigate = useNavigate()
-
-	// useEffect(() => {
-	// 	if (role === "master") {
-	// 		return
-	// 	}
-
-	// 	navigate("/")
-	// }, [])
+	useEffect(() => {
+		getProgress()
+	}, [state.user])
 
 	return (
 		<>
@@ -154,9 +146,12 @@ const MileStoneCard: React.FC<MileStoneCardProps> = ({
 				p={5}
 				gap={3}
 			>
-				{tasks.map((task) => {
+				{tasks.map((task, index) => {
 					return (
-						<Flex gap={2}>
+						<Flex
+							gap={2}
+							key={index}
+						>
 							<StatusCircle status={task.status} />
 							<Text>{task.description}</Text>
 						</Flex>
@@ -168,6 +163,12 @@ const MileStoneCard: React.FC<MileStoneCardProps> = ({
 }
 
 const ProgressionBar = () => {
+	const team = useContext().state.progress.teams[1]
+
+	if (!team) {
+		throw new Error("team cant be undefined")
+	}
+
 	return (
 		<Flex
 			direction="column"
@@ -178,7 +179,7 @@ const ProgressionBar = () => {
 				color="blue.500"
 				size="2xl"
 			>
-				Team frontend
+				Team {team.name}
 			</Heading>
 			<Flex
 				bgColor="blue.100"
@@ -189,7 +190,7 @@ const ProgressionBar = () => {
 			>
 				<Flex
 					h="full"
-					w="25%"
+					w={`${Math.round(team.percentageDone)}%`}
 					bgColor="blue.400"
 					alignItems="center"
 					justifyContent="end"
@@ -200,7 +201,7 @@ const ProgressionBar = () => {
 						color="blue.50"
 						p={2.5}
 					>
-						25%
+						{Math.round(team.percentageDone)}%
 					</Text>
 				</Flex>
 			</Flex>
