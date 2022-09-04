@@ -1,10 +1,13 @@
 import React from "react"
 import MainService from "../services/MainService"
 import { reducer, Action } from "./GlobalReducer"
+import { placeHolderTasks } from "./placeholderData"
 
 export interface GlobalState {
 	token: string
 	user: UserInterface
+	taskId: number
+	tasks: Task[]
 }
 
 export interface UserInterface {
@@ -16,6 +19,15 @@ export interface UserInterface {
 	team: string
 	role: string
 }
+
+export interface Task {
+	id: number
+	name: string
+	description: string
+	state: TaskState
+}
+
+export type TaskState = "toDo" | "doing" | "review" | "done"
 
 export const initialUserState: UserInterface = {
 	id: 0,
@@ -30,6 +42,8 @@ export const initialUserState: UserInterface = {
 const initialState: GlobalState = {
 	token: "",
 	user: initialUserState,
+	taskId: 0,
+	tasks: placeHolderTasks,
 }
 
 export interface Commands {
@@ -37,6 +51,7 @@ export interface Commands {
 	setToken: (token: string) => void
 	setUser: (user: UserInterface) => void
 	getUser: () => void
+	setTaskId: (id: number) => void
 }
 
 interface ContextInterface {
@@ -50,6 +65,7 @@ const Context = React.createContext<ContextInterface>({
 		setToken: () => {},
 		setUser: () => {},
 		getUser: () => {},
+		setTaskId: () => {},
 	},
 })
 
@@ -84,11 +100,19 @@ export const GlobalProvider = (props: { children: React.ReactNode }) => {
 			})
 	}
 
+	const setTaskId = (id: number) => {
+		dispatch({
+			type: Action.SET_TASK_ID,
+			id,
+		})
+	}
+
 	const commands: Commands = {
 		// getToken,
 		setToken,
 		setUser,
 		getUser,
+		setTaskId,
 	}
 
 	return (

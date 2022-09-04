@@ -1,35 +1,47 @@
-import { Divider, Flex, Heading, Text } from "@chakra-ui/react"
+import { Divider, Flex, Heading, Text, useDisclosure } from "@chakra-ui/react"
+import { useEffect, useState } from "react"
 import TopNavBar from "../../components/TopNavBar"
+import { Task, useContext } from "../../Contexts/GlobalContext"
+import TaskModal from "./TaskModal"
 
 const LeaderPage = () => {
+	const { isOpen, onOpen, onClose } = useDisclosure()
+
 	return (
-		<Flex
-			direction="column"
-			bg="gray.100"
-			minH="100vh"
-		>
-			<header>
-				<TopNavBar />
-			</header>
+		<>
+			<TaskModal
+				isOpen={isOpen}
+				onOpen={onOpen}
+				onClose={onClose}
+			/>
 			<Flex
-				as="main"
-				pt={4}
-				px={16}
-				gap={6}
-				flexGrow={1}
+				direction="column"
+				bg="gray.100"
+				minH="100vh"
 			>
+				<header>
+					<TopNavBar />
+				</header>
 				<Flex
-					direction="column"
-					w="full"
-					gap={4}
+					as="main"
+					pt={4}
+					px={16}
+					gap={6}
 					flexGrow={1}
 				>
-					<ProgressionBar />
-					<Board />
+					<Flex
+						direction="column"
+						w="full"
+						gap={4}
+						flexGrow={1}
+					>
+						<ProgressionBar />
+						<Board onOpen={onOpen} />
+					</Flex>
+					<Billboard />
 				</Flex>
-				<Billboard />
 			</Flex>
-		</Flex>
+		</>
 	)
 }
 
@@ -265,7 +277,29 @@ const ProgressionBar = () => {
 	)
 }
 
-const Board = () => {
+const Board = ({ onOpen }: { onOpen: () => void }) => {
+	const { state } = useContext()
+	const { tasks } = state
+
+	const [toDoTasks, setToDoTasks] = useState<Task[]>([])
+	const [doingTasks, setDoingTasks] = useState<Task[]>([])
+	const [reviewTasks, setReviewTasks] = useState<Task[]>([])
+	const [doneTasks, setDoneTasks] = useState<Task[]>([])
+
+	useEffect(() => {
+		const toDo = tasks.filter((task) => task.state === "toDo")
+		setToDoTasks(toDo)
+
+		const doing = tasks.filter((task) => task.state === "doing")
+		setDoingTasks(doing)
+
+		const review = tasks.filter((task) => task.state === "review")
+		setReviewTasks(review)
+
+		const done = tasks.filter((task) => task.state === "done")
+		setDoneTasks(done)
+	}, [tasks])
+
 	return (
 		<Flex
 			direction="column"
@@ -290,6 +324,8 @@ const Board = () => {
 				<BoardColumn
 					name="To do"
 					emoji="🧐"
+					onOpen={onOpen}
+					tasks={toDoTasks}
 				/>
 				<Divider
 					orientation="vertical"
@@ -298,6 +334,8 @@ const Board = () => {
 				<BoardColumn
 					name="Doing"
 					emoji="😮‍💨"
+					onOpen={onOpen}
+					tasks={doingTasks}
 				/>
 				<Divider
 					orientation="vertical"
@@ -306,6 +344,8 @@ const Board = () => {
 				<BoardColumn
 					name="Review"
 					emoji="🥶"
+					onOpen={onOpen}
+					tasks={reviewTasks}
 				/>
 				<Divider
 					orientation="vertical"
@@ -314,6 +354,8 @@ const Board = () => {
 				<BoardColumn
 					name="Done"
 					emoji="🥳"
+					onOpen={onOpen}
+					tasks={doneTasks}
 				/>
 			</Flex>
 		</Flex>
@@ -323,12 +365,24 @@ const Board = () => {
 interface TeamMemberColumnProps {
 	name?: string
 	emoji?: string
+	onOpen: () => void
+	tasks: Task[]
 }
 
 const BoardColumn: React.FC<TeamMemberColumnProps> = ({
 	name = "Placeholder",
 	emoji = "🫥",
+	onOpen,
+	tasks,
 }) => {
+	const { commands } = useContext()
+	const { setTaskId } = commands
+
+	const handleOpen = (id: number) => {
+		onOpen()
+		setTaskId(id)
+	}
+
 	return (
 		<Flex
 			alignItems="start"
@@ -355,9 +409,17 @@ const BoardColumn: React.FC<TeamMemberColumnProps> = ({
 					{emoji}
 				</Text>
 			</Flex>
-			<TaskCard />
-			<TaskCard />
-			<TaskCard />
+			{tasks.map((task) => {
+				return (
+					<TaskCard
+						onOpen={() => {
+							handleOpen(task.id)
+						}}
+						title={task.name}
+						description={task.description}
+					/>
+				)
+			})}
 		</Flex>
 	)
 }
@@ -365,12 +427,16 @@ const BoardColumn: React.FC<TeamMemberColumnProps> = ({
 interface TaskCardProps {
 	title?: string
 	description?: string
+	onOpen: () => void
 }
 
 const TaskCard: React.FC<TaskCardProps> = ({
 	title = "Title",
 	description = "Donec gravida suspendisse tellus fermentum id lacus dui sit.",
+	onOpen,
 }) => {
+	const [isHovering, setIsHovering] = useState(false)
+
 	return (
 		<Flex
 			bgColor="white"
@@ -380,6 +446,11 @@ const TaskCard: React.FC<TaskCardProps> = ({
 			w="full"
 			direction="column"
 			maxW="285px"
+			onClick={onOpen}
+			boxShadow={isHovering ? "outline" : "none"}
+			style={{ cursor: isHovering ? "pointer" : "default" }}
+			onMouseOver={() => setIsHovering(true)}
+			onMouseLeave={() => setIsHovering(false)}
 		>
 			<Flex
 				w="full"
@@ -392,7 +463,7 @@ const TaskCard: React.FC<TaskCardProps> = ({
 					{title}
 				</Text>
 			</Flex>
-			<Text fontSize="xl">{description}</Text>
+			<Text fontSize="md">{description}</Text>
 		</Flex>
 	)
 }

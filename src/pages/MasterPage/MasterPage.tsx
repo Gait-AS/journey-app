@@ -7,8 +7,17 @@ import person3 from "../../assets/profile3.png"
 import person4 from "../../assets/profile4.png"
 import person5 from "../../assets/profile5.png"
 import { AddIcon } from "@chakra-ui/icons"
+import { useNavigate } from "react-router-dom"
+import { useContext } from "../../Contexts/GlobalContext"
+import { useEffect } from "react"
 
 const MasterPage = () => {
+	const { state } = useContext()
+	const { user } = state
+	const { role } = user
+
+	const navigate = useNavigate()
+
 	return (
 		<Flex
 			direction="column"
