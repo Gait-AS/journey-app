@@ -1,38 +1,38 @@
-import apiClient from "../services/api"
-import { Task, TaskStatus } from "../Contexts/GlobalContext"
+import apiClient from "../services/api";
+import { Task, TaskStatus } from "../Contexts/GlobalContext";
 
 interface Response<T> {
-	status: boolean
-	message: string
-	data: T
+	status: boolean;
+	message: string;
+	data: T;
 }
 
 interface UserResponse {
-	id: number
-	team_id: number
-	created_at: string
-	email: string
-	email_verified_at: string
-	first_name: string
-	last_name: string
-	role: string
-	updated_at: string
+	id: number;
+	team_id: number;
+	created_at: string;
+	email: string;
+	email_verified_at: string;
+	first_name: string;
+	last_name: string;
+	role: string;
+	updated_at: string;
 }
 
 interface ProgressResponse {
-	total: number
+	total: number;
 	teams: {
-		name: string
-		total_tasks: number
-		done_tasks: number
-		not_done_tasks: number
-		percentage_done: number
-	}[]
+		name: string;
+		total_tasks: number;
+		done_tasks: number;
+		not_done_tasks: number;
+		percentage_done: number;
+	}[];
 }
 
 class MainService {
 	authenticate = async (email: string, password: string) => {
-		await apiClient.get("/sanctum/csrf-cookie")
+		await apiClient.get("sanctum/csrf-cookie");
 
 		return await apiClient
 			.post<Response<string>>("api/auth/authenticate", {
@@ -40,57 +40,52 @@ class MainService {
 				password: password,
 			})
 			.then((response) => {
-				localStorage.setItem("token", response.data.data)
-				return response.data
+				localStorage.setItem("token", response.data.data);
+				return response.data;
 			})
 			.catch((error) => {
-				console.error("error in test post:", error)
+				console.error("error in test post:", error);
 				return {
 					status: false,
 					message: error.message,
 					data: "",
-				} as Response<string>
-			})
-	}
+				} as Response<string>;
+			});
+	};
 
 	getUser = async () => {
 		return await apiClient
 			.get<Response<UserResponse>>(`api/user`)
 			.then((response) => {
-				return response.data
+				return response.data;
 			})
 			.catch((error) => {
-				console.error("error in MainService.getUser", error)
+				console.error("error in MainService.getUser", error);
 				return {
 					status: false,
 					message: error,
 					data: {},
-				} as Response<UserResponse>
-			})
-	}
+				} as Response<UserResponse>;
+			});
+	};
 
 	getTasks = async () => {
 		return await apiClient
 			.get<Response<Task[]>>("api/tasks/me")
 			.then((response) => {
-				return response.data
+				return response.data;
 			})
 			.catch((error) => {
-				console.error("error in MainService.getTasks", error)
+				console.error("error in MainService.getTasks", error);
 				return {
 					status: false,
 					message: error,
 					data: [],
-				} as Response<Task[]>
-			})
-	}
+				} as Response<Task[]>;
+			});
+	};
 
-	updateTask = async (
-		id: number,
-		name: string,
-		status: TaskStatus,
-		content: string
-	) => {
+	updateTask = async (id: number, name: string, status: TaskStatus, content: string) => {
 		return await apiClient
 			.post<Response<Task>>(`api/tasks/me/${id}`, {
 				name: name,
@@ -98,59 +93,54 @@ class MainService {
 				content: content,
 			})
 			.then((response) => {
-				return response.data
+				return response.data;
 			})
 			.catch((error) => {
-				console.error("error in MainService.updateTask", error)
+				console.error("error in MainService.updateTask", error);
 				return {
 					status: false,
 					message: error,
 					data: {},
-				} as Response<Task>
-			})
-	}
+				} as Response<Task>;
+			});
+	};
 
-	registerUser = async (
-		email: string,
-		password: string,
-		firstName: string,
-		lastName: string
-	) => {
+	registerUser = async (email: string, password: string, firstName: string, lastName: string) => {
 		return await apiClient
-			.post<Response<string>>(`auth/register`, {
+			.post<Response<string>>(`api/auth/register`, {
 				email: email,
 				password: password,
 				first_name: firstName,
 				last_name: lastName,
 			})
 			.then((response) => {
-				return response.data
+				return response.data;
 			})
 			.catch((error) => {
-				console.error("error in MainService.registerUser", error)
+				console.error("error in MainService.registerUser", error);
 				return {
 					status: false,
 					message: error,
 					data: "",
-				}
-			})
-	}
+				};
+			});
+	};
 
 	deleteTask = async (id: number) => {
 		return await apiClient
 			.get<Response<[]>>(`api/tasks/me/delete/${id}`)
 			.then((response) => {
-				return response.data
+				return response.data;
 			})
 			.catch((error) => {
-				console.error("error in MainService.deleteTask", error)
+				console.error("error in MainService.deleteTask", error);
 				return {
 					status: false,
 					message: error,
 					data: [],
-				}
-			})
-	}
+				};
+			});
+	};
 
 	createTask = async (name: string, content: string, teamId: number) => {
 		return await apiClient
@@ -160,10 +150,10 @@ class MainService {
 				team_id: teamId,
 			})
 			.then((response) => {
-				return response.data
+				return response.data;
 			})
 			.catch((error) => {
-				console.error("error in MainService.createTask", error)
+				console.error("error in MainService.createTask", error);
 				return {
 					status: false,
 					message: error,
@@ -173,18 +163,18 @@ class MainService {
 						content: "",
 						status: "todo",
 					},
-				}
-			})
-	}
+				};
+			});
+	};
 
 	getProgress = async () => {
 		return await apiClient
 			.get<Response<ProgressResponse>>("api/progress")
 			.then((response) => {
-				return response.data
+				return response.data;
 			})
 			.catch((error) => {
-				console.error("error in MainService.getProgress", error)
+				console.error("error in MainService.getProgress", error);
 				return {
 					status: false,
 					message: error,
@@ -200,11 +190,11 @@ class MainService {
 							},
 						],
 					},
-				}
-			})
-	}
+				};
+			});
+	};
 }
 
-const MainServiceProvider = new MainService()
+const MainServiceProvider = new MainService();
 
-export default MainServiceProvider
+export default MainServiceProvider;

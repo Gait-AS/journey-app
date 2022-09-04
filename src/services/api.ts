@@ -1,4 +1,4 @@
-import axios from "axios"
+import axios from "axios";
 
 /**
  * @description
@@ -14,6 +14,6 @@ const apiClient = axios.create({
 		Accept: "application/json",
 		Authorization: "Bearer " + localStorage.getItem("token"),
 	},
-})
+});
 
-export default apiClient
+export default apiClient;
