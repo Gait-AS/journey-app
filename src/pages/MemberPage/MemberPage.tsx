@@ -261,11 +261,6 @@ const ProgressionBar = () => {
 		designPercent = teams[2].percentageDone
 	}
 
-	console.log(totalProgress)
-	console.log(frontendPercent)
-	console.log(backendPercent)
-	console.log(designPercent)
-
 	return (
 		<Flex
 			direction="column"
