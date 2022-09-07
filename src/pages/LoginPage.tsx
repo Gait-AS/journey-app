@@ -6,7 +6,7 @@ import {
 	Heading,
 	Input,
 } from "@chakra-ui/react"
-import React from "react"
+import React, { useEffect } from "react"
 import MainService from "../services/MainService"
 import { useNavigate } from "react-router-dom"
 import { useContext } from "../Contexts/GlobalContext"
@@ -30,12 +30,16 @@ export default LoginPage
 
 const FormContainer = () => {
 	const { commands, state } = useContext()
-	const { setToken, getUser } = commands
+	const { getUser } = commands
 	const [email, setEmail] = React.useState("")
 	const [password, setPassword] = React.useState("")
 	const [isLoading, setIsLoading] = React.useState(false)
 
 	const navigate = useNavigate()
+
+	useEffect(() => {
+		state.user.role && navigate("/member")
+	}, [])
 
 	const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault()
